@@ -38,5 +38,24 @@ namespace ReactApp_v9.Controllers
             data.Add(newPhone);
             return Ok(data);
         }
+
+        [HttpDelete("{id}")]
+        public ActionResult<IEnumerable<Phone>> Delete(int id) 
+        {
+            #region FindById
+            Phone? deletePhone = null;
+            foreach (Phone phone in data)
+            {
+                if (phone.Id == id)
+                { 
+                    deletePhone = phone; 
+                    break; 
+                }
+            }
+            #endregion
+            if(deletePhone != null)
+                  data.Remove(deletePhone);
+            return Ok(data);
+        }
     }
 }
