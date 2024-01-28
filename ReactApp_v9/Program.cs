@@ -1,10 +1,17 @@
+using ReactApp_v9.Data;
+using ReactApp_v9.Services;
+using ReactApp_v9.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IPhoneDbService, PhoneDbService>();
+builder.Services.AddSingleton<PhoneDbContext>();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

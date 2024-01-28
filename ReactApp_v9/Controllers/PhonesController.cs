@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReactApp_v9.Data;
 using ReactApp_v9.Models;
-
-
+using ReactApp_v9.Services.Interfaces;
 
 namespace ReactApp_v9.Controllers
 {
@@ -9,52 +9,39 @@ namespace ReactApp_v9.Controllers
     [ApiController]
     public class PhonesController : Controller
     {
-        static readonly List<Phone> data;
-        static PhonesController()
+        private IPhoneDbService _phonesService;
+        public PhonesController(IPhoneDbService phoneDbService)
         {
-            data = new List<Phone>
-            {
-                new Phone ("iPhone 7", 52000),
-                new Phone ("Samsung Galaxy S7",42000),
-            };
+            _phonesService = phoneDbService;
         }
+
         [HttpGet]
         public ActionResult<IEnumerable<Phone>> Get()
         {
+            var data = _phonesService.GetAllPhone();
             return Ok(data);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Phone> Get(int id)
         {
-            if (data[id - 1] == null)
-                return NotFound();
-            return Ok(data[id - 1]);
+            var data = _phonesService.GetPhoneById(id);
+            return Ok(data);
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<Phone>> Create([FromBody]Phone newPhone)
+        public ActionResult<IEnumerable<Phone>> Create([FromBody] Phone newPhone)
         {
-            data.Add(newPhone);
+            _phonesService.AddPhone(newPhone);
+            var data = _phonesService.GetAllPhone();
             return Ok(data);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<IEnumerable<Phone>> Delete(int id) 
+        public ActionResult<IEnumerable<Phone>> Delete(int id)
         {
-            #region FindById
-            Phone? deletePhone = null;
-            foreach (Phone phone in data)
-            {
-                if (phone.Id == id)
-                { 
-                    deletePhone = phone; 
-                    break; 
-                }
-            }
-            #endregion
-            if(deletePhone != null)
-                  data.Remove(deletePhone);
+            _phonesService.DeletePhoneById(id);
+            var data = _phonesService.GetAllPhone();
             return Ok(data);
         }
     }
